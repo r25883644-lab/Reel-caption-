@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reel Studio</title>
+<style>
+  :root{--bg:#0b1020;--card:#121a30;--field:#0e1628;--line:#24304f;--text:#e8ecf7;--muted:#8d99b8;--a1:#6366f1;--a2:#8b5cf6}
+  *{box-sizing:border-box}
+  body{margin:0 auto;max-width:520px;padding:20px 16px 40px;background:var(--bg);color:var(--text);font-family:Inter,"Segoe UI",system-ui,Roboto,sans-serif}
+  header{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+  .logo{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-size:20px;color:#fff;background:linear-gradient(135deg,var(--a1),var(--a2))}
+  h1{font-size:21px;margin:0}header p{margin:2px 0 0;font-size:13px;color:var(--muted)}
+  h2{font-size:15px;margin:22px 0 0;padding-top:16px;border-top:1px solid var(--line)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 16px 18px}
+  label{display:block;font-size:12px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+  select,input[type=file],textarea{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--field);color:var(--text);font-size:15px;font-family:inherit}
+  input[type=color]{width:100%;height:44px;padding:4px;border-radius:10px;border:1px solid var(--line);background:var(--field)}
+  textarea{min-height:70px;display:none;margin-top:10px}
+  .row{display:flex;gap:12px}.row>div{flex:1;min-width:0}
+  .chk{display:flex;align-items:center;gap:10px;margin-top:12px;font-size:15px}.chk input{width:18px;height:18px;accent-color:var(--a1)}
+  #go{width:100%;margin-top:18px;height:52px;border:0;border-radius:12px;color:#fff;font-size:16px;font-weight:700;background:linear-gradient(135deg,var(--a1),var(--a2))}
+  #go:disabled{opacity:.45}
+  #status{margin:14px 2px;font-size:14px;min-height:20px;color:var(--muted)}
+  canvas{width:100%;border-radius:14px;background:#000;display:none;border:1px solid var(--line)}
+  #dl{display:none;margin-top:14px;text-align:center;padding:14px;border-radius:12px;background:#10b981;color:#fff;font-weight:700;text-decoration:none}
+  video{display:none}
+</style>
+</head>
+<body>
+<header><div class="logo">▶</div><div><h1>Reel Studio</h1><p>Reel size, border &amp; animated captions</p></div></header>
+<div class="card">
+<label>Select video</label>
+<input type="file" id="file" accept="video/*">
+
+<div class="row">
+  <div><label>Reel size</label>
+    <select id="platform"><option value="instagram">Instagram Reel</option><option value="facebook">Facebook Reel</option><option value="tiktok">TikTok</option></select></div>
+  <div><label>Output quality</label>
+    <select id="res"><option value="orig">Original (same as source)</option><option value="1080">1080 × 1920</option><option value="720">720 × 1280 (fastest)</option></select></div>
+</div>
+<div class="row">
+  <div><label>Background</label>
+    <select id="bg"><option value="blur">Blurred video</option><option value="black">Black</option><option value="white">White</option></select></div>
+  <div><label>Border</label>
+    <select id="bw"><option value="0">None</option><option value="0.006">Thin</option><option value="0.012" selected>Medium</option><option value="0.02">Thick</option></select></div>
+</div>
+<label>Border color</label><input type="color" id="bc" value="#ffffff">
+
+<h2>Captions</h2>
+<div class="row">
+  <div><label>Mode</label>
+    <select id="capmode"><option value="auto">Auto (from speech)</option><option value="manual">Type manually</option><option value="off">Off</option></select></div>
+  <div><label>Speech language</label>
+    <select id="lang"><option value="">Detect automatically</option><option value="hindi">Hindi</option><option value="english">English</option></select></div>
+</div>
+<textarea id="manual" placeholder="Type your captions here"></textarea>
+<div class="row">
+  <div><label>Font</label>
+    <select id="font">
+      <option value='Arial, sans-serif'>Arial</option>
+      <option value='"Arial Black", Impact, sans-serif'>Arial Black</option>
+      <option value='Impact, "Arial Narrow", sans-serif'>Impact</option>
+      <option value='Georgia, serif'>Georgia</option>
+      <option value='"Courier New", monospace'>Typewriter</option>
+      <option value='"Comic Sans MS", cursive'>Comic</option>
+      <option value='"Noto Sans Devanagari", sans-serif'>Devanagari</option>
+    </select></div>
+  <div><label>Animation</label>
+    <select id="anim"><option value="pop">Pop</option><option value="fade">Fade in</option><option value="slide">Slide up</option><option value="bounce">Bounce word</option><option value="type">Word by word</option><option value="none">None</option></select></div>
+</div>
+<div class="row">
+  <div><label>Size</label>
+    <select id="size"><option value="0.05">Small</option><option value="0.075" selected>Medium</option><option value="0.1">Large</option></select></div>
+  <div><label>Position</label>
+    <select id="pos"><option value="bottom">Bottom</option><option value="middle">Middle</option><option value="top">Top</option></select></div>
+</div>
+<div class="row">
+  <div><label>Words per line</label>
+    <select id="per"><option>1</option><option>2</option><option selected>3</option><option>4</option></select></div>
+  <div><label>Text color</label><input type="color" id="tc" value="#ffffff"></div>
+</div>
+<label>Highlight color</label><input type="color" id="hc" value="#ffe600">
+<div class="chk"><input type="checkbox" id="hl" checked><span>Highlight spoken word</span></div>
+<div class="chk"><input type="checkbox" id="outline" checked><span>Text outline</span></div>
+<div class="chk"><input type="checkbox" id="box"><span>Dark box behind text</span></div>
+<div class="chk"><input type="checkbox" id="upper" checked><span>UPPERCASE (English)</span></div>
+</div>
+
+<button id="go" disabled>Create Reel</button>
+<div id="status"></div>
+<canvas id="cv"></canvas>
+<a id="dl">Download Reel</a>
+<video id="v" playsinline></video>
+
+<script>
+const $ = id => document.getElementById(id);
+const cv = $("cv"), ctx = cv.getContext("2d"), v = $("v");
+const bgc = document.createElement("canvas"); bgc.width = 135; bgc.height = 240;
+const bgx = bgc.getContext("2d");
+const MARGIN = { instagram: 0.135, facebook: 0.125, tiktok: 0.177 };
+let file = null, AC = null, SRC = null;
+const status = t => $("status").textContent = t;
+$("file").onchange = e => { file = e.target.files[0]; $("go").disabled = !file; };
+$("capmode").onchange = () => $("manual").style.display = $("capmode").value === "manual" ? "block" : "none";
+
+function outSize(vw, vh, mode) {
+  let W = mode === "720" ? 720 : mode === "1080" ? 1080 : Math.min(vw, vh);
+  W = Math.max(2, Math.round(W / 2) * 2);
+  return [W, Math.round(W * 16 / 9 / 2) * 2];
+}
+
+async function transcribe(f, lang) {
+  status("Loading AI model (first run takes a little longer)...");
+  const { pipeline } = await import("https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.0.2");
+  const asr = await pipeline("automatic-speech-recognition", "Xenova/whisper-base");
+  status("Transcribing speech...");
+  const ac = new AudioContext({ sampleRate: 16000 });
+  const audio = await ac.decodeAudioData(await f.arrayBuffer());
+  const opts = { return_timestamps: "word", chunk_length_s: 30, task: "transcribe" };
+  if (lang) opts.language = lang;
+  const out = await asr(audio.getChannelData(0), opts);
+  return (out.chunks || []).map(c => ({ s: c.timestamp[0], e: c.timestamp[1] ?? c.timestamp[0] + 0.4, t: c.text.trim() })).filter(w => w.t);
+}
+function manualWords(text, dur) {
+  const p = text.trim().split(/\s+/).filter(Boolean), st = dur / Math.max(p.length, 1);
+  return p.map((t, i) => ({ s: i * st, e: (i + 1) * st, t }));
+}
+
+function captions(o, t) {
+  const ws = o.words, n = o.per, i = ws.findIndex(w => t >= w.s && t < w.e);
+  if (i < 0) return;
+  const g0 = Math.floor(i / n) * n, grp = ws.slice(g0, g0 + n);
+  const ga = t - grp[0].s, age = t - ws[i].s, W = o.W, H = o.H, size = Math.round(W * o.size);
+  ctx.font = `800 ${size}px ${o.font}, "Noto Sans Devanagari", sans-serif`;
+  ctx.textBaseline = "middle"; ctx.textAlign = "left"; ctx.lineJoin = "round";
+  const lab = w => o.upper && /^[\x00-\x7F]*$/.test(w.t) ? w.t.toUpperCase() : w.t;
+  const gap = size * 0.28, wd = grp.map(w => ctx.measureText(lab(w)).width);
+  const total = wd.reduce((a, c) => a + c, 0) + gap * (grp.length - 1);
+  const fit = Math.min(1, W * 0.9 / total);
+  const cy = o.pos === "top" ? H * 0.1 : o.pos === "middle" ? H * 0.5 : H * (1 - o.margin);
+  let sc = 1, alpha = 1, dy = 0;
+  if (o.anim === "pop") sc = ga < 0.12 ? 0.7 + 0.35 * ga / 0.12 : ga < 0.2 ? 1.05 - 0.05 * (ga - 0.12) / 0.08 : 1;
+  if (o.anim === "fade") alpha = Math.min(1, ga / 0.25);
+  if (o.anim === "slide") { const k = Math.min(1, ga / 0.25); dy = (1 - k) * size * 0.8; alpha = k; }
+  ctx.save();
+  ctx.translate(W / 2, cy + dy); ctx.scale(sc * fit, sc * fit); ctx.globalAlpha = alpha;
+  if (o.box) {
+    const pad = size * 0.35; ctx.fillStyle = "rgba(0,0,0,.6)"; ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(-total / 2 - pad, -size * 0.75, total + 2 * pad, size * 1.5, size * 0.3);
+    else ctx.rect(-total / 2 - pad, -size * 0.75, total + 2 * pad, size * 1.5);
+    ctx.fill();
+  }
+  let x = -total / 2;
+  grp.forEach((w, k) => {
+    const idx = g0 + k;
+    if (o.anim === "type" && w.s > t) { x += wd[k] + gap; return; }
+    const by = o.anim === "bounce" && idx === i ? -size * 0.25 * Math.sin(Math.min(age / 0.25, 1) * Math.PI) : 0;
+    if (o.outline) { ctx.lineWidth = size * 0.16; ctx.strokeStyle = "#000"; ctx.strokeText(lab(w), x, by); }
+    ctx.fillStyle = o.hl && idx === i ? o.hc : o.tc;
+    ctx.fillText(lab(w), x, by);
+    x += wd[k] + gap;
+  });
+  ctx.restore();
+}
+
+function frame(o) {
+  const W = o.W, H = o.H, vw = v.videoWidth, vh = v.videoHeight, b = Math.round(W * o.bw);
+  ctx.globalAlpha = 1;
+  if (o.bg === "blur") {
+    const s = Math.max(135 / vw, 240 / vh);
+    bgx.drawImage(v, (135 - vw * s) / 2, (240 - vh * s) / 2, vw * s, vh * s);
+    ctx.imageSmoothingEnabled = true; ctx.drawImage(bgc, 0, 0, W, H);
+    ctx.fillStyle = "rgba(0,0,0,.35)"; ctx.fillRect(0, 0, W, H);
+  } else { ctx.fillStyle = o.bg === "white" ? "#fff" : "#000"; ctx.fillRect(0, 0, W, H); }
+  const s = Math.min((W - 2 * b) / vw, (H - 2 * b) / vh), fw = vw * s, fh = vh * s;
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(v, (W - fw) / 2, (H - fh) / 2, fw, fh);
+  if (b > 0) { ctx.strokeStyle = o.bc; ctx.lineWidth = b; ctx.strokeRect(b / 2, b / 2, W - b, H - b); }
+  if (o.words.length) captions(o, v.currentTime);
+}
+
+$("go").onclick = async () => {
+  try {
+    $("go").disabled = true; $("dl").style.display = "none";
+    if (!AC) { AC = new AudioContext(); SRC = AC.createMediaElementSource(v); }
+    AC.resume();
+    v.src = URL.createObjectURL(file);
+    await new Promise(r => v.onloadedmetadata = r);
+    const dur = v.duration, mode = $("capmode").value;
+    let words = [];
+    if (mode === "auto") words = await transcribe(file, $("lang").value);
+    else if (mode === "manual") words = manualWords($("manual").value, dur);
+
+    const [W, H] = outSize(v.videoWidth, v.videoHeight, $("res").value);
+    cv.width = W; cv.height = H; cv.style.display = "block";
+    const o = { W, H, words, bg: $("bg").value, bw: +$("bw").value, bc: $("bc").value, font: $("font").value, anim: $("anim").value,
+      size: +$("size").value, pos: $("pos").value, per: +$("per").value, tc: $("tc").value, hc: $("hc").value, hl: $("hl").checked,
+      outline: $("outline").checked, box: $("box").checked, upper: $("upper").checked, margin: MARGIN[$("platform").value] };
+
+    status(`Rendering ${W}×${H}... keep the screen on until it finishes.`);
+    await AC.resume(); v.muted = false; v.volume = 1;
+    const dest = AC.createMediaStreamDestination(); SRC.connect(dest);
+    const stream = cv.captureStream(30);
+    dest.stream.getAudioTracks().forEach(t => stream.addTrack(t));
+    const mime = ["video/mp4;codecs=avc1,mp4a.40.2", "video/mp4;codecs=avc1", "video/webm;codecs=vp9,opus", "video/webm"].find(m => MediaRecorder.isTypeSupported(m));
+    const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: Math.min(30e6, Math.round(W * H * 30 * 0.2)) });
+    const chunks = []; rec.ondataavailable = e => e.data.size && chunks.push(e.data);
+    const done = new Promise(r => rec.onstop = r);
+    v.onended = () => rec.state !== "inactive" && rec.stop();
+
+    v.currentTime = 0; await new Promise(r => v.onseeked = r);
+    rec.start(500); await v.play();
+    const tick = () => {
+      if (v.ended) return;
+      frame(o); status(`Rendering: ${Math.floor(v.currentTime)} / ${Math.floor(dur)} sec`); next();
+    };
+    const next = () => v.requestVideoFrameCallback ? v.requestVideoFrameCallback(tick) : requestAnimationFrame(tick);
+    next();
+    await done; SRC.disconnect(dest);
+
+    const ext = mime.startsWith("video/mp4") ? "mp4" : "webm";
+    $("dl").href = URL.createObjectURL(new Blob(chunks, { type: mime }));
+    $("dl").download = `reel_${$("platform").value}.${ext}`; $("dl").style.display = "block";
+    status("Done! Download your reel below.");
+  } catch (err) { console.error(err); status("Error: " + (err.message || err)); }
+  finally { $("go").disabled = false; }
+};
+</script>
+</body>
+</html>
